@@ -47,6 +47,8 @@ var earth;
 var mercury;
 var venus;
 var mars;
+var pointLight;
+var mbMaterial;
 function init() {
     // Instantiate a new Scene object
     scene = new Scene();
@@ -61,9 +63,15 @@ function init() {
     plane.rotation.x = -0.5 * Math.PI;
     scene.add(plane);
     console.log("Added Plane Primitive to scene...");
+    var pointLight = new THREE.PointLight(0xff2424, 1, 100);
+    //  pointLight.position.set(0,4,0);
+    //scene.add(pointLight);
     //Add Planets to the Scene
-    sun = new gameObject(new SphereGeometry(0.5, 32, 32), new LambertMaterial({ color: 0xff35ff }), 0, 4, 0);
+    sun = new gameObject(new SphereGeometry(5, 32, 32), new MeshBasicMaterial({ color: 0xff5e00 }), 0, 4, 0);
+    //pointLight.add(sun);
     scene.add(sun);
+    sun.add(pointLight);
+    //scene.add(pointLight);
     console.log("Added Sun Primitive to scene...");
     mercury = new gameObject(new SphereGeometry(1, 32, 32), new LambertMaterial({ color: 0xff0000 }), 3, 0, 0);
     sun.add(mercury);
