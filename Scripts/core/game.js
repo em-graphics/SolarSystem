@@ -13,6 +13,7 @@ var AxisHelper = THREE.AxisHelper;
 var LambertMaterial = THREE.MeshLambertMaterial;
 var MeshBasicMaterial = THREE.MeshBasicMaterial;
 var Material = THREE.Material;
+var MeshPhongMaterial = THREE.MeshPhongMaterial;
 var Mesh = THREE.Mesh;
 var Object3D = THREE.Object3D;
 var SpotLight = THREE.SpotLight;
@@ -33,7 +34,7 @@ var camera;
 var axes;
 var cube;
 var plane;
-var sphere;
+var sun;
 var ambientLight;
 var spotLight;
 var control;
@@ -42,7 +43,10 @@ var stats;
 var step = 0;
 var cubeGeometry;
 var cubeMaterial;
-var childCube;
+var earth;
+var mercury;
+var venus;
+var mars;
 function init() {
     // Instantiate a new Scene object
     scene = new Scene();
@@ -53,17 +57,26 @@ function init() {
     scene.add(axes);
     console.log("Added Axis Helper to scene...");
     //Add a Plane to the Scene
-    plane = new gameObject(new PlaneGeometry(20, 20, 1, 1), new LambertMaterial({ color: 0xff35ff }), 0, 0, 0);
+    plane = new gameObject(new PlaneGeometry(40, 40, 1, 1), new LambertMaterial({ color: 0xff35ff }), 0, 0, 0);
     plane.rotation.x = -0.5 * Math.PI;
     scene.add(plane);
     console.log("Added Plane Primitive to scene...");
-    //Add a Cube to the Scene
-    cube = new gameObject(new CubeGeometry(8, 8, 8), new LambertMaterial({ color: 0xff35ff }), 0, 4, 0);
-    scene.add(cube);
-    console.log("Added Cube Primitive to scene...");
-    childCube = new gameObject(new CubeGeometry(2, 2, 2), new LambertMaterial({ color: 0xff0000 }), 10, 0, 0);
-    cube.add(childCube);
-    console.log("Added Child Cube Primitive to cube object...");
+    //Add Planets to the Scene
+    sun = new gameObject(new SphereGeometry(0.5, 32, 32), new LambertMaterial({ color: 0xff35ff }), 0, 4, 0);
+    scene.add(sun);
+    console.log("Added Sun Primitive to scene...");
+    mercury = new gameObject(new SphereGeometry(1, 32, 32), new LambertMaterial({ color: 0xff0000 }), 3, 0, 0);
+    sun.add(mercury);
+    console.log("Added Mercury Primitive to cube object...");
+    venus = new gameObject(new SphereGeometry(2, 32, 32), new LambertMaterial({ color: 0xff0000 }), 5, 0, 0);
+    sun.add(venus);
+    console.log("Added Venus Primitive to cube object...");
+    earth = new gameObject(new SphereGeometry(5, 32, 32), new LambertMaterial({ color: 0xff0000 }), 10, 0, 0);
+    sun.add(earth);
+    console.log("Added Earth Primitive to cube object...");
+    mars = new gameObject(new SphereGeometry(3, 32, 32), new LambertMaterial({ color: 0xff0000 }), 12, 0, 0);
+    sun.add(mars);
+    console.log("Added Mars Primitive to cube object...");
     // Add an AmbientLight to the scene
     ambientLight = new AmbientLight(0x090909);
     scene.add(ambientLight);
@@ -107,7 +120,7 @@ function addStatsObject() {
 // Setup main game loop
 function gameLoop() {
     stats.update();
-    cube.rotation.y += control.rotationSpeed;
+    sun.rotation.y += control.rotationSpeed;
     // render using requestAnimationFrame
     requestAnimationFrame(gameLoop);
     // render the scene
@@ -132,5 +145,4 @@ function setupCamera() {
     camera.lookAt(new Vector3(0, 0, 0));
     console.log("Finished setting up Camera...");
 }
-
 //# sourceMappingURL=game.js.map
