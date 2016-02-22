@@ -51,8 +51,16 @@ var earth: Mesh;
 var mercury: Mesh;
 var venus: Mesh;
 var mars: Mesh;
+var moon: Mesh;
 var pointLight:PointLight;
 var mbMaterial :MeshBasicMaterial;
+var ob_mercury : Object3D;
+var ob_venus : Object3D;
+var ob_earth : Object3D;
+var ob_mars : Object3D;
+var pivot : Object3D;
+var test : Object3D;
+
 function init() {
     // Instantiate a new Scene object
     scene = new Scene();
@@ -65,63 +73,81 @@ function init() {
     axes = new AxisHelper(10);
     scene.add(axes);
     console.log("Added Axis Helper to scene...");
-    
-    //Add a Plane to the Scene
-    plane = new gameObject(
-        new PlaneGeometry(40, 40, 1, 1),
-        new LambertMaterial({ color: 0xff35ff }),
-        0, 0, 0);
-
-    plane.rotation.x = -0.5 * Math.PI;
-
-    scene.add(plane);
-    console.log("Added Plane Primitive to scene...");
-    
+        
     var pointLight = new THREE.PointLight( 0xff2424, 1, 100 );
-  //  pointLight.position.set(0,4,0);
-   //scene.add(pointLight);
+  
     //Add Planets to the Scene
    sun = new gameObject(
         new SphereGeometry(5, 32, 32),
         new MeshBasicMaterial({ color: 0xff5e00 }),
         0, 4, 0);
-    //pointLight.add(sun);
+    
     scene.add(sun);
+    // Add Point Light on sun
     sun.add(pointLight);
-    //scene.add(pointLight);
+    
     console.log("Added Sun Primitive to scene...");
     
+    ob_mercury = new Object3D();
+    scene.add(ob_mercury);
+    
     mercury = new gameObject(
-        new SphereGeometry(1, 32  , 32),
+        new SphereGeometry(0.7, 32  , 32),
         new LambertMaterial({ color: 0xff0000 }),
-        3, 0, 0);
+        8, 4, 0);
 
-    sun.add(mercury)
-    console.log("Added Mercury Primitive to cube object...");
+    ob_mercury.add(mercury);
+    console.log("Added Mercury Primitive to sphere object...");
+    
+    
+    ob_venus = new Object3D();
+    scene.add(ob_venus);
     
     venus = new gameObject(
-        new SphereGeometry(2, 32  , 32),
+        new SphereGeometry(1, 32  , 32),
         new LambertMaterial({ color: 0xff0000 }),
-        5, 0, 0);
+        11, 4, 0);
 
-    sun.add(venus)
-    console.log("Added Venus Primitive to cube object...");
+    ob_venus.add(venus)
+    console.log("Added Venus Primitive to sphere object...");
+    
+    
+    ob_earth = new Object3D();
+    scene.add(ob_earth);
     
     earth = new gameObject(
-        new SphereGeometry(5, 32  , 32),
+        new SphereGeometry(1, 32  , 32),
         new LambertMaterial({ color: 0xff0000 }),
-        10, 0, 0);
+        14, 4, 0);
 
-    sun.add(earth)
-    console.log("Added Earth Primitive to cube object...");
+    ob_earth.add(earth)
+    console.log("Added Earth Primitive to sphere object...");
     
+    
+    
+    pivot = new Object3D();
+    pivot.position.x = 14;
+    pivot.position.y = 4;
+    pivot.rotateOnAxis;
+    scene.add(pivot);
+   
+    
+    moon = new gameObject(
+        new SphereGeometry(5, 32  , 32),
+        new LambertMaterial({ color: 0xffe400 }),
+        1.7, 0, 0);
+    
+    pivot.add(moon);
+    
+    ob_mars = new Object3D();
+    scene.add(ob_mars);
     mars = new gameObject(
-        new SphereGeometry(3, 32  , 32),
+        new SphereGeometry(0.5, 32  , 32),
         new LambertMaterial({ color: 0xff0000 }),
-        12, 0, 0);
+        17, 4, 0);
 
-    sun.add(mars)
-    console.log("Added Mars Primitive to cube object...");
+    ob_mars.add(mars)
+    console.log("Added Mars Primitive to sphere object...");
     
     // Add an AmbientLight to the scene
     ambientLight = new AmbientLight(0x090909);
@@ -161,6 +187,14 @@ function onResize(): void {
 
 function addControl(controlObject: Control): void {
     gui.add(controlObject, 'rotationSpeed', -0.5, 0.5);
+    gui.add({zoom: 100}, 'zoom', 5, 200).onChange(function(value){
+        camera.fov=value;
+        camera.updateProjectionMatrix();
+    }
+    
+    );
+    
+
 }
 
 function addStatsObject() {
@@ -176,7 +210,12 @@ function addStatsObject() {
 function gameLoop(): void {
     stats.update();
 
-    sun.rotation.y += control.rotationSpeed;
+    ob_mercury.rotation.y += control.rotationSpeed;
+    ob_venus.rotation.y += -0.07;
+    ob_earth.rotation.y += 0.020;
+     ob_mars.rotation.y += 0.015;
+ //  pivot.rotation.z += 0.002;
+   pivot.rotation.y = 2 * Math.PI / 3;
     
     // render using requestAnimationFrame
     requestAnimationFrame(gameLoop);
@@ -188,7 +227,7 @@ function gameLoop(): void {
 // Setup default renderer
 function setupRenderer(): void {
     renderer = new Renderer();
-    renderer.setClearColor(0xEEEEEE, 1.0);
+    renderer.setClearColor(0x070707, 1.0);
     renderer.setSize(CScreen.WIDTH, CScreen.HEIGHT);
     //renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
@@ -197,7 +236,7 @@ function setupRenderer(): void {
 
 // Setup main camera for the scene
 function setupCamera(): void {
-    camera = new PerspectiveCamera(45, config.Screen.RATIO, 0.1, 1000);
+    camera = new PerspectiveCamera(100, config.Screen.RATIO, 0.1, 1000);
     //camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.x = 0.6;
     camera.position.y = 16;
