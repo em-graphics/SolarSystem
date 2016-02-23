@@ -28,6 +28,9 @@ import Vector3 = THREE.Vector3;
 import Face3 = THREE.Face3;
 import Point = objects.Point;
 import CScreen = config.Screen;
+import TextureLoader = THREE.TextureLoader;
+import ImageUtils = THREE.ImageUtils;
+import RepeatWrapping = THREE.RepeatWrapping;
 
 //Custom Game Objects
 import gameObject = objects.gameObject;
@@ -54,12 +57,19 @@ var mars: Mesh;
 var moon: Mesh;
 var pointLight:PointLight;
 var mbMaterial :MeshBasicMaterial;
-var ob_mercury : Object3D;
-var ob_venus : Object3D;
-var ob_earth : Object3D;
-var ob_mars : Object3D;
-var pivot : Object3D;
-var test : Object3D;
+var t: number;
+var sunTextureLoader:TextureLoader;
+var mercuryTextureLoader:TextureLoader;
+var marsTextureLoader:TextureLoader;
+var earthTextureLoader:TextureLoader;
+var moonTextureLoader:TextureLoader;
+var venusTextureLoader:TextureLoader;
+var g_mercury:MeshPhongMaterial;
+var g_venus:MeshPhongMaterial;
+var g_earth:MeshPhongMaterial;
+var g_moon:MeshPhongMaterial;
+var g_mars:MeshPhongMaterial;
+
 
 function init() {
     // Instantiate a new Scene object
@@ -73,80 +83,134 @@ function init() {
     axes = new AxisHelper(20);
     scene.add(axes);
     console.log("Added Axis Helper to scene...");
-        
-    var pointLight = new THREE.PointLight( 0xff2424, 1, 100 );
-  
+    t = 0;   
+    
+    // Add point light on sun
+    pointLight = new PointLight( 0xff2424, 1, 100 );
+    pointLight.position.set(0,4,0);
+    pointLight.castShadow = true;
+    pointLight.shadowMapWidth = 2048;
+    pointLight.shadowMapHeight = 2048;
+    
+    scene.add(pointLight);
     //Add Planets to the Scene
-   sun = new gameObject(
+  /* sun = new gameObject(
         new SphereGeometry(5, 32, 32),
-        new MeshBasicMaterial({ color: 0xff5e00 }),
+        new MeshBasicMaterial({ map: TextureLoader.lo }),
         0, 4, 0);
     
     scene.add(sun);
-    // Add Point Light on sun
-    sun.add(pointLight);
-    
-    console.log("Added Sun Primitive to scene...");
-    
-    ob_mercury = new Object3D();
-    scene.add(ob_mercury);
     
     mercury = new gameObject(
         new SphereGeometry(0.7, 32  , 32),
         new LambertMaterial({ color: 0xff0000 }),
         8, 4, 0);
-
-    ob_mercury.add(mercury);
-    console.log("Added Mercury Primitive to sphere object...");
-    
-    
-    ob_venus = new Object3D();
-    scene.add(ob_venus);
+    mercury.castShadow = true;
+    scene.add(mercury);
     
     venus = new gameObject(
         new SphereGeometry(1, 32  , 32),
         new LambertMaterial({ color: 0xff0000 }),
         11, 4, 0);
-
-    ob_venus.add(venus)
-    console.log("Added Venus Primitive to sphere object...");
-    
-    
-    ob_earth = new Object3D();
-    scene.add(ob_earth);
+    venus.castShadow = true;
+    scene.add(venus);
     
     earth = new gameObject(
         new SphereGeometry(1, 32  , 32),
         new LambertMaterial({ color: 0xff0000 }),
         14, 4, 0);
-
-    ob_earth.add(earth)
-    console.log("Added Earth Primitive to sphere object...");
-        
-    pivot = new Object3D();
-    pivot.position.x = 14;
-    pivot.position.y = 4;
-    pivot.rotateOnAxis;
-    scene.add(pivot);
-   
+    earth.castShadow = true;    
+    scene.add(earth);
     
     moon = new gameObject(
-        new SphereGeometry(5, 32  , 32),
+        new SphereGeometry(0.5, 32  , 32),
         new LambertMaterial({ color: 0xffe400 }),
         1.7, 0, 0);
+    moon.castShadow = true;
+    earth.add(moon);
     
-    pivot.add(moon);
-    
-    ob_mars = new Object3D();
-    scene.add(ob_mars);
     mars = new gameObject(
         new SphereGeometry(0.5, 32  , 32),
         new LambertMaterial({ color: 0xff0000 }),
         17, 4, 0);
+    mars.castShadow = true;    
+    scene.add(mars);
+    */
+    
+    
+    sunTextureLoader = new TextureLoader();
+    sunTextureLoader.load('./images/sunmap.png', function(texture){
+        var g = new SphereGeometry(5, 20,20);
+        texture.anisotropy = 8;
+        var m = new MeshBasicMaterial({map:texture, overdraw:0.5});
+        sun = new Mesh(g, m);
+        sun.position.y = 4;
+        scene.add(sun);
+               
+    });
+    
+    
+    console.log("Added Sun Primitive to scene...");
+    
+    var t_mercury = ImageUtils.loadTexture('./images/mercurymap.jpg');
+    t_mercury.anisotropy = 8;
+    g_mercury = new MeshPhongMaterial({map : t_mercury});
+    mercury = new gameObject(new SphereGeometry(0.7, 32, 32),
+        g_mercury,
+        8, 4, 0);
+    
+    mercury.castShadow = true;
+    scene.add(mercury);
+    
+    console.log("Added Mercury Primitive to sphere object...");
 
-    ob_mars.add(mars)
+    
+    var t_venus = ImageUtils.loadTexture('./images/venusmap.jpg');
+    t_venus.anisotropy = 8;
+    g_venus = new MeshPhongMaterial({map : t_venus});
+    venus = new gameObject(new SphereGeometry(1, 32, 32),
+        g_venus,
+        11, 4, 0);
+    venus.castShadow = true;
+    scene.add(venus);
+    
+    console.log("Added Venus Primitive to sphere object...");
+    
+    
+    var t_earth = ImageUtils.loadTexture('./images/earthmap.jpg');
+    t_earth.anisotropy = 8;
+    g_earth = new MeshPhongMaterial({map : t_earth});
+    earth = new gameObject(new SphereGeometry(1, 32, 32),
+        g_earth,
+        14, 4, 0);
+    earth.castShadow = true;
+    scene.add(earth);
+    
+    console.log("Added Earth Primitive to sphere object...");
+    
+    var t_moon = ImageUtils.loadTexture('./images/moonmap.jpg');
+    t_moon.anisotropy = 8;
+    g_moon = new MeshPhongMaterial({map : t_moon});
+    moon = new gameObject(new SphereGeometry(0.3, 32, 32),
+        g_moon,
+        -1.7, 0, 0);
+    moon.castShadow = true;
+    earth.add(moon);
+    
+    console.log("Added Moon Primitive to sphere object...");
+    
+    var t_mars = ImageUtils.loadTexture('./images/marsmap.jpg');
+    t_mars.anisotropy = 8;
+    g_mars = new MeshPhongMaterial({map : t_mars});
+    mars = new gameObject(new SphereGeometry(0.5, 32, 32),
+        g_mars,
+        17, 4, 0);
+    mars.castShadow = true;
+    scene.add(mars);
+    
     console.log("Added Mars Primitive to sphere object...");
     
+  
     // Add an AmbientLight to the scene
     ambientLight = new AmbientLight(0x090909);
     scene.add(ambientLight);
@@ -170,8 +234,7 @@ function init() {
     console.log("Added Stats to scene...");
 
     document.body.appendChild(renderer.domElement);
-    gameLoop(); // render the scene    
-  
+    gameLoop(); // render the scene      
 }
 
 
@@ -197,12 +260,24 @@ function addStatsObject() {
 function gameLoop(): void {
     stats.update();
 
-    ob_mercury.rotation.y += control.rotationSpeed;
-    ob_venus.rotation.y += -0.07;
-    ob_earth.rotation.y += 0.020;
-     ob_mars.rotation.y += 0.015;
- //  pivot.rotation.z += 0.002;
-   pivot.rotation.y = 2 * Math.PI / 3;
+    mercury.position.x = Math.sin(t*0.1)*8;
+    mercury.position.z = Math.cos(t*0.1)*8;
+    
+    venus.position.x = Math.sin(t*0.3)*11;
+    venus.position.z = Math.cos(t*0.3)*11;
+    
+    earth.position.x = Math.sin(t*0.5)*14;
+    earth.position.z = Math.cos(t*0.5)*14;
+    
+    mars.position.x = Math.sin(t*0.7)*17;
+    mars.position.z = Math.cos(t*0.7)*17;
+
+    mercury.rotation.y += 0.02;
+    venus.rotation.y -= 0.003;
+    earth.rotation.y += 0.05;
+    mars.rotation.y += 0.01;
+  
+   t+= Math.PI/180*2;
     
     // render using requestAnimationFrame
     requestAnimationFrame(gameLoop);
