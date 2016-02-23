@@ -3,11 +3,12 @@ var config;
     var Screen = (function () {
         function Screen() {
         }
-        Screen.WIDTH = 1000;
-        Screen.HEIGHT = 800;
-        Screen.RATIO = 1.333333;
+        Screen.WIDTH = window.innerWidth;
+        Screen.HEIGHT = window.innerHeight;
+        Screen.RATIO = window.innerWidth / window.innerHeight;
         return Screen;
     })();
     config.Screen = Screen;
 })(config || (config = {}));
+
 //# sourceMappingURL=screen.js.map

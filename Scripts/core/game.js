@@ -62,7 +62,7 @@ function init() {
     setupRenderer(); // setup the default renderer
     setupCamera(); // setup the camera
     // add an axis helper to the scene
-    axes = new AxisHelper(10);
+    axes = new AxisHelper(20);
     scene.add(axes);
     console.log("Added Axis Helper to scene...");
     var pointLight = new THREE.PointLight(0xff2424, 1, 100);
@@ -118,15 +118,7 @@ function init() {
     addStatsObject();
     console.log("Added Stats to scene...");
     document.body.appendChild(renderer.domElement);
-    gameLoop(); // render the scene	
-    window.addEventListener('resize', onResize, false);
-}
-function onResize() {
-    camera.aspect = CScreen.RATIO;
-    //camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    //renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setSize(CScreen.WIDTH, CScreen.HEIGHT);
+    gameLoop(); // render the scene    
 }
 function addControl(controlObject) {
     gui.add(controlObject, 'rotationSpeed', -0.5, 0.5);
@@ -176,4 +168,5 @@ function setupCamera() {
     camera.lookAt(new Vector3(0, 0, 0));
     console.log("Finished setting up Camera...");
 }
+
 //# sourceMappingURL=game.js.map

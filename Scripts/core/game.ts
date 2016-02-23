@@ -70,7 +70,7 @@ function init() {
     setupCamera(); // setup the camera
 	
     // add an axis helper to the scene
-    axes = new AxisHelper(10);
+    axes = new AxisHelper(20);
     scene.add(axes);
     console.log("Added Axis Helper to scene...");
         
@@ -122,9 +122,7 @@ function init() {
 
     ob_earth.add(earth)
     console.log("Added Earth Primitive to sphere object...");
-    
-    
-    
+        
     pivot = new Object3D();
     pivot.position.x = 14;
     pivot.position.y = 4;
@@ -172,29 +170,18 @@ function init() {
     console.log("Added Stats to scene...");
 
     document.body.appendChild(renderer.domElement);
-    gameLoop(); // render the scene	
-    
-    window.addEventListener('resize', onResize, false);
+    gameLoop(); // render the scene    
+  
 }
 
-function onResize(): void {
-    camera.aspect = CScreen.RATIO;
-    //camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    //renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setSize(CScreen.WIDTH, CScreen.HEIGHT);
-}
+
 
 function addControl(controlObject: Control): void {
     gui.add(controlObject, 'rotationSpeed', -0.5, 0.5);
     gui.add({zoom: 100}, 'zoom', 5, 200).onChange(function(value){
         camera.fov=value;
         camera.updateProjectionMatrix();
-    }
-    
-    );
-    
-
+    });
 }
 
 function addStatsObject() {
