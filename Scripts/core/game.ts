@@ -33,6 +33,8 @@ import ImageUtils = THREE.ImageUtils;
 import CircleGeometry = THREE.CircleGeometry;
 import Line = THREE.Line;
 import LineBasicMaterial = THREE.LineBasicMaterial;
+import Sprite = THREE.Sprite;
+import SpriteMaterial = THREE.SpriteMaterial;
 
 //Custom Game Objects
 import gameObject = objects.gameObject;
@@ -66,7 +68,7 @@ var marsTextureLoader:TextureLoader;
 var earthTextureLoader:TextureLoader;
 var moonTextureLoader:TextureLoader;
 var venusTextureLoader:TextureLoader;
-var g_sun:MeshPhongMaterial;
+var g_sun:MeshBasicMaterial;
 var g_mercury:MeshPhongMaterial;
 var g_venus:MeshPhongMaterial;
 var g_earth:MeshPhongMaterial;
@@ -104,20 +106,28 @@ function init() {
     pointLight.shadowMapHeight = 2048;
     
     scene.add(pointLight);
+   
+   // Add stars 
+   for ( var i = 0; i < 2000; i ++ ) { 
+    var particle = new Sprite( new SpriteMaterial( { color: Math.random() * 0x808080 + 0x808080 } ) );
+					particle.position.x = Math.random() * 1000 - 500;
+					particle.position.y = Math.random() * 1000 - 500;
+					particle.position.z = Math.random() * 1000 - 500;
+					particle.scale.x = particle.scale.y = 0.5;
+                    
+					scene.add( particle );                  
+   }		
+    
     
     //Add Planets to the Scene
-    
-    sunTextureLoader = new TextureLoader();
-    sunTextureLoader.load('./images/sunmap.png', function(texture){
-        var g = new SphereGeometry(5, 20,20);
-        texture.anisotropy = 8;
-        var m = new MeshBasicMaterial({map:texture, overdraw:0.5});
-        sun = new Mesh(g, m);
-        sun.position.y = 4;
-        scene.add(sun);
-               
-    });
-    
+        
+    var t_sun = ImageUtils.loadTexture('./images/sunmap.png');
+    t_sun.anisotropy = 8;
+    g_sun = new MeshBasicMaterial({map : t_sun,overdraw:0.5});
+    sun = new Mesh(new SphereGeometry(5, 32, 32),
+        g_sun);
+    sun.position.set(0,4,0);    
+    scene.add(sun);
     
     console.log("Added Sun Primitive to scene...");
     
@@ -303,7 +313,7 @@ function gameLoop(): void {
     mars.position.x = Math.sin(t*0.07)*39;
     mars.position.z = Math.cos(t*0.07)*39;
 
-    
+    sun.rotation.y -= 0.025;
     mercury.rotation.y += 0.02;
     venus.rotation.y -= 0.003;
     earth.rotation.y += 0.05;
@@ -322,7 +332,7 @@ function gameLoop(): void {
 // Setup default renderer
 function setupRenderer(): void {
     renderer = new Renderer();
-    renderer.setClearColor(0x212121, 1.0);
+    renderer.setClearColor(0x161616, 1.0);
     renderer.setSize(CScreen.WIDTH, CScreen.HEIGHT);
     //renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
