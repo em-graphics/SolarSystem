@@ -275,9 +275,7 @@ function init() {
 }
 
 
-
 function addControl(controlObject: Control): void {
-    gui.add(controlObject, 'rotationSpeed', -0.5, 0.5);
     gui.add({zoom: 100}, 'zoom', 5, 200).onChange(function(value){
         camera.fov=value;
         camera.updateProjectionMatrix();
