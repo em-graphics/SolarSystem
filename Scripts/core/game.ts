@@ -1,3 +1,15 @@
+/*
+Source file name : https://github.com/em-graphics/SolarSystem.git
+Live link : http://solarsystem-assignment2.azurewebsites.net
+Author : Eunmi Han(300790610)
+Date last Modified : Mar 26, 2016
+Program Description : Solar System (Mercury, Venus, Earth and Mars with Moon)
+Revision History :1.10
+
+Last Modified by Eunmi Han
+
+*/
+
 /// <reference path="_reference.ts"/>
 
 // MAIN GAME FILE
@@ -28,7 +40,6 @@ import Vector3 = THREE.Vector3;
 import Face3 = THREE.Face3;
 import Point = objects.Point;
 import CScreen = config.Screen;
-import TextureLoader = THREE.TextureLoader;
 import ImageUtils = THREE.ImageUtils;
 import CircleGeometry = THREE.CircleGeometry;
 import Line = THREE.Line;
@@ -60,14 +71,7 @@ var venus: Mesh;
 var mars: Mesh;
 var moon: Mesh;
 var pointLight:PointLight;
-var mbMaterial :MeshBasicMaterial;
 var t: number;
-var sunTextureLoader:TextureLoader;
-var mercuryTextureLoader:TextureLoader;
-var marsTextureLoader:TextureLoader;
-var earthTextureLoader:TextureLoader;
-var moonTextureLoader:TextureLoader;
-var venusTextureLoader:TextureLoader;
 var g_sun:MeshBasicMaterial;
 var g_mercury:MeshPhongMaterial;
 var g_venus:MeshPhongMaterial;
@@ -119,7 +123,7 @@ function init() {
    }		
     
     
-    //Add Planets to the Scene
+    //Add Planets and Texture to the Scene 
         
     var t_sun = ImageUtils.loadTexture('./images/sunmap.png');
     t_sun.anisotropy = 8;
@@ -295,7 +299,7 @@ function addStatsObject() {
 function gameLoop(): void {
     stats.update();
 
-
+    //Set a orbit for Planets
     mercury.position.x = Math.cos(t*0.15)*17;
     mercury.position.z = Math.sin(t*0.15)*17;
     
@@ -311,6 +315,7 @@ function gameLoop(): void {
     mars.position.x = Math.sin(t*0.07)*39;
     mars.position.z = Math.cos(t*0.07)*39;
 
+    // Set a rotation for planets
     sun.rotation.y -= 0.025;
     mercury.rotation.y += 0.02;
     venus.rotation.y -= 0.003;
