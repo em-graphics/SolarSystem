@@ -65,6 +65,7 @@ var mercury;
 var venus;
 var mars;
 var moon;
+var jupiter;
 var pointLight;
 var t;
 var g_sun;
@@ -73,12 +74,14 @@ var g_venus;
 var g_earth;
 var g_moon;
 var g_mars;
+var g_jupiter;
 var pivot;
-var orbitMercury;
 var o_mercury;
 var o_venus;
 var o_earth;
 var o_mars;
+var o_jupiter;
+var checkCamera;
 function init() {
     // Instantiate a new Scene object
     scene = new Scene();
@@ -152,6 +155,13 @@ function init() {
     mars.castShadow = true;
     scene.add(mars);
     console.log("Added Mars Primitive to sphere object...");
+    var t_jupiter = ImageUtils.loadTexture('./images/jupitermap.jpg');
+    t_jupiter.anisotropy = 8;
+    g_jupiter = new MeshPhongMaterial({ map: t_jupiter });
+    jupiter = new gameObject(new SphereGeometry(0.9, 32, 32), g_jupiter, 20, 4, 0);
+    jupiter.castShadow = true;
+    scene.add(jupiter);
+    console.log("Added jupiter Primitive to sphere object...");
     //Add Planet's Orbit
     o_mercury = new Geometry();
     for (var i = 0; i <= 35; i++) {
@@ -177,6 +187,12 @@ function init() {
         o_mars.vertices.push(new THREE.Vector3(Math.cos(theta) * 39, 4, Math.sin(theta) * 39));
     }
     scene.add(new Line(o_mars, new LineBasicMaterial({ color: 0xFFFFFF })));
+    o_jupiter = new Geometry();
+    for (var i = 0; i <= 35; i++) {
+        var theta = (i / 35) * Math.PI * 2;
+        o_jupiter.vertices.push(new THREE.Vector3(Math.cos(theta) * 43, 4, Math.sin(theta) * 43));
+    }
+    scene.add(new Line(o_jupiter, new LineBasicMaterial({ color: 0xFFFFFF })));
     // Add an AmbientLight to the scene
     ambientLight = new AmbientLight(0x090909);
     scene.add(ambientLight);
@@ -188,21 +204,25 @@ function init() {
     spotLight.castShadow = true;
     scene.add(spotLight);
     console.log("Added a SpotLight Light to Scene");
-    // add controls
+    // add dat.gui controls
     gui = new GUI();
-    control = new Control(0.05);
-    addControl(control);
+    gui.add({ zoom: 100 }, 'zoom', 5, 200).onChange(function (value) {
+        camera.lookAt(sun.position);
+        camera.fov = value;
+        camera.updateProjectionMatrix();
+        checkCamera = 1;
+    });
+    gui.add({ zoomToEarth: 90 }, 'zoomToEarth', 5, 200).onChange(function (value) {
+        camera.lookAt(earth.position);
+        camera.fov = value;
+        camera.updateProjectionMatrix();
+        checkCamera = 2;
+    });
     // Add framerate stats
     addStatsObject();
     console.log("Added Stats to scene...");
     document.body.appendChild(renderer.domElement);
     gameLoop(); // render the scene      
-}
-function addControl(controlObject) {
-    gui.add({ zoom: 100 }, 'zoom', 5, 200).onChange(function (value) {
-        camera.fov = value;
-        camera.updateProjectionMatrix();
-    });
 }
 function addStatsObject() {
     stats = new Stats();
@@ -226,14 +246,25 @@ function gameLoop() {
     pivot.position.z = Math.cos(t * 0.2) * 30;
     mars.position.x = Math.sin(t * 0.07) * 39;
     mars.position.z = Math.cos(t * 0.07) * 39;
+    jupiter.position.x = Math.cos(t * 0.07) * 43;
+    jupiter.position.z = Math.sin(t * 0.07) * 43;
     // Set a rotation for planets
     sun.rotation.y -= 0.025;
     mercury.rotation.y += 0.02;
     venus.rotation.y -= 0.003;
     earth.rotation.y += 0.05;
-    pivot.rotation.z -= 0.01;
+    pivot.rotation.y += 0.01;
     mars.rotation.y += 0.01;
+    jupiter.rotation.y += 0.013;
     t += Math.PI / 180 * 2;
+    if (checkCamera == 1) {
+        camera.lookAt(sun.position);
+        camera.updateProjectionMatrix();
+    }
+    if (checkCamera == 2) {
+        camera.lookAt(earth.position);
+        camera.updateProjectionMatrix();
+    }
     // render using requestAnimationFrame
     requestAnimationFrame(gameLoop);
     // render the scene
